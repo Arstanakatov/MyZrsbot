@@ -7,8 +7,7 @@ const bot = new Telegraf(process.env.BOT_TOKEN)
 const cron = require('node-cron');
 const axios = require('axios');
 
-
-
+// start
 bot.command('start', async (ctx) => {
   try {
     const channels = ['@zrschannell']
@@ -18,13 +17,11 @@ bot.command('start', async (ctx) => {
     let subscribedToAll = true
 
     for (let i = 0; i < channels.length; i++) {
-      // Проверить, является ли пользователь участником канала
       const result = await ctx.telegram.getChatMember(channels[i], user)
 
       if (result.status === 'member' || result.status === 'creator' || result.status === 'administrator') {
-        // Пользователь подписан на канал
+     
       } else {
-        // Пользователь не подписан на канал
         subscribedToAll = false
         buttons.push([Markup.button.url(`Подписаться на ${channels[i]}`, `https://t.me/${channels[i].slice(1)}`)])
       }
@@ -48,7 +45,14 @@ bot.command('start', async (ctx) => {
     ctx.reply('Произошла ошибка при проверке подписки. Попробуйте еще раз позже.')
   }
 })
+
+
+// help
+
 bot.help((ctx) => ctx.reply(non.commands));
+
+
+// add action on zrskino
 
 function addActionBotKino(name,src){
   bot.action(name,async (ctx) =>{
@@ -65,6 +69,7 @@ function addActionBotKino(name,src){
         [Markup.button.callback('0002','btn_kino_2')],
         [Markup.button.callback('0003','btn_kino_3')],
         [Markup.button.callback('0004','btn_kino_4')],
+        [Markup.button.callback('-----  Назад  -----','btn_back')],
       ]
      ))
   }catch(e){
@@ -73,8 +78,12 @@ function addActionBotKino(name,src){
   })
 }
 
+// reply on button 'btn_1'
+
 addActionBotKino('btn_1',false)
 
+
+// add action on zrsanime
 
 function addActionBotAnime(name,src){
   bot.action(name,async (ctx) =>{
@@ -89,7 +98,7 @@ function addActionBotAnime(name,src){
       [
         [Markup.button.callback('0001','btn_anime_1')],
         [Markup.button.callback('0002','btn_anime_2')],
-        // [Markup.button.callback('0003','btn_anime_3')],
+        [Markup.button.callback('-----  Назад  -----','btn_back')],
       ]
      ))
   }catch(e){
@@ -98,27 +107,42 @@ function addActionBotAnime(name,src){
   })
 }
 
+
+// reply on 'btn_2'
+
 addActionBotAnime('btn_2',false)
 
-
-function addActionBotAll(name, src, url, buttonText) { 
-  bot.action(name, async (ctx) => { 
-    try { 
-      await ctx.answerCbQuery()
-      if (src !== false) { 
-        await ctx.replyWithPhoto({ source: src } ) 
-      } 
+// answer on buttons zrskino , zrsanime and zrsmult
+function addActionBotAll(name, src, url, buttonText) {
+  bot.action(name, async (ctx) => {
+    try {
+      await ctx.answerCbQuery();
+      if (src !== false) {
+        await ctx.replyWithPhoto({ source: src });
+      }
       await ctx.replyWithHTML(`<b>Нажми на :</b> <a href="${url}">${buttonText}</a>`, {
         disable_web_page_preview: true,
-        reply_markup: Markup.inlineKeyboard([Markup.button.callback('Назад', 'back_button')])
       });
-      
-    } catch (e) { 
-      console.error(e) 
-    } 
-  }) 
+
+    } catch (e) {
+      console.error(e);
+    }   
+  });
 }
 
+
+ // button back
+
+bot.action('btn_back', async(ctx)=> {
+  try{
+  await ctx.answerCbQuery()
+  await ctx.deleteMessage(); 
+
+  }catch(e){
+    console.error(e)
+  }
+})
+ 
 addActionBotAll('btn_kino_1', './img/kino1.jpg', 'https://t.me/zrskinot/4', '🎥 Астерикс и Обеликс: Поднебесная (2023 zrs.kino)') 
 addActionBotAll('btn_kino_2','./img/kino2.jfif','https://t.me/zrskinot/5', '🎥 Крик 6 Год (2023 zrs.kino)')
 addActionBotAll('btn_kino_3','./img/kino3.jfif','https://t.me/zrskinot/7', '🎥Стражи Галактики 3 (zrs.kino [1080p])')
