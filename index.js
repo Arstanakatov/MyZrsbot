@@ -4,8 +4,7 @@ const { text } = require('telegraf');
 require('dotenv').config() 
 const non = require('./const')
 const bot = new Telegraf(process.env.BOT_TOKEN)
-const cron = require('node-cron');
-const axios = require('axios');
+
 
 // start
 bot.command('start', async (ctx) => {
